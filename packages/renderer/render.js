@@ -4,7 +4,7 @@
  * Initial mounting of a VNode tree to the real DOM.
  */
 
-import { VNodeTypes } from './vnode.js';
+import { VNodeTypes, h } from './vnode.js';
 
 /**
  * Create a real DOM element from a VNode.
@@ -39,10 +39,9 @@ export function createEl(vnode) {
             el.appendChild(createEl(child));
         });
     } else if (vnodeType === VNodeTypes.COMPONENT) {
-        // Component support will be wired in Runtime (Phase 6)
-        // For now, we'll render a placeholder or the component's render result
         if (type.render) {
-            const subVNode = type.render();
+            // Pass 'h' to the component's render function
+            const subVNode = type.render(h, {});
             el = vnode.el = createEl(subVNode);
         } else {
             el = vnode.el = document.createComment('component-placeholder');

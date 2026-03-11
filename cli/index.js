@@ -29,7 +29,8 @@ switch (command) {
         break;
 
     case 'serve':
-        startDevServer();
+        const port = args[1] ? parseInt(args[1], 10) : 3000;
+        startDevServer(port);
         break;
 
     default:

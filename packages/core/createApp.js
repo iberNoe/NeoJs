@@ -5,7 +5,8 @@
  */
 
 import { setCurrentInstance } from './lifecycle.js';
-import { mount } from '../renderer/index.js';
+import { mount, h } from '../renderer/index.js';
+import { createComponentInstance } from '../runtime/index.js';
 
 /**
  * Create a NeoJS application.
@@ -34,35 +35,21 @@ export function createApp(rootComponent) {
 
             this._container = container;
 
-            // Create a component instance (this will be more complex in Phase 6)
-            const instance = {
-                def: rootComponent,
-                mounted: [],
-                updated: [],
-                unmounted: [],
-                // state, render function, etc will be wired up in runtime
-            };
+            // 1. Initialize component instance (wires up reactivity, compiler, etc.)
+            // The createComponentInstance already calls update() once sync
+            const instance = createComponentInstance(rootComponent);
             this._instance = instance;
 
-            // In the simplest case from the user's example:
-            // container.innerHTML = rootComponent.render();
-            // But we will use our renderer subsequently.
-
-            // Setup phase
+            // 2. Setup lifecycle tracking
             setCurrentInstance(instance);
 
-            // Initial render and mount
-            // For now, simpler implementation as Phase 4/6 will expand this
-            if (typeof rootComponent.render === 'function') {
-                // This is where real Virtual DOM integration happens
-                // mount(rootComponent.render(), container);
-            } else {
-                // Fallback for simple example
-                container.innerHTML = rootComponent.template || '';
-            }
+            // 3. Mount the initial VNode (stored in instance.subTree)
+            mount(instance.subTree, container);
 
-            // Call mounted hooks
-            instance.mounted.forEach(hook => hook());
+            // 4. Call mounted hooks
+            if (instance.mounted) {
+                instance.mounted.forEach(hook => hook());
+            }
 
             setCurrentInstance(null);
 

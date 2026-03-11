@@ -37,33 +37,28 @@ export function createComponentInstance(def, rawProps = {}) {
         instance.render = def.render;
     }
 
-    // Define update function (the "core loop" of a component)
+    // Define update function
     const update = () => {
         if (!instance.isMounted) {
-            // 1. Initial Render
             const subTree = instance.subTree = instance.render(h, instance.state);
             instance.isMounted = true;
             return subTree;
         } else {
-            // 2. Diff & Patch
             const nextSubTree = instance.render(h, instance.state);
             const patches = diff(instance.subTree, nextSubTree);
             patch(instance.subTree.el, patches);
             instance.subTree = nextSubTree;
-
-            // Call updated hooks
             instance.updated.forEach(hook => hook());
         }
     };
 
-    // Setup reactive effect for the update
-    // We use the scheduler (queueJob) to batch updates
-    const componentEffect = effect(() => {
-        queueJob(update);
+    // The runner is what the scheduler should execute
+    const runner = effect(update, {
+        scheduler: () => queueJob(runner)
     });
 
-    instance.update = update;
-    instance.stop = componentEffect.stop;
+    instance.update = runner;
+    instance.stop = () => { runner.active = false; };
 
     return instance;
 }

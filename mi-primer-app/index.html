@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeoJS Todo App</title>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --bg: #f8fafc;
+      --text: #1e293b;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding-top: 50px;
+    }
+
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      color: var(--primary);
+    }
+
+    .input-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    input {
+      flex: 1;
+      padding: 0.6rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--primary);
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .todo-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #f1f5f9;
+      padding: 0.8rem;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    li:hover {
+      background: #e2e8f0;
+    }
+
+    li.completed {
+      text-decoration: line-through;
+      opacity: 0.6;
+      background: #f8fafc;
+    }
+
+    .stats {
+      font-size: 0.875rem;
+      color: #64748b;
+      text-align: center;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+
+</html>

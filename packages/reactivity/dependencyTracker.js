@@ -15,7 +15,7 @@ const targetMap = new WeakMap();
  * @param {Function|null} effect
  */
 export function setActiveEffect(effect) {
-  activeEffect = effect;
+    activeEffect = effect;
 }
 
 /**
@@ -24,21 +24,21 @@ export function setActiveEffect(effect) {
  * @param {string} key    - The property being read
  */
 export function track(target, key) {
-  if (!activeEffect) return;
+    if (!activeEffect) return;
 
-  let depsMap = targetMap.get(target);
-  if (!depsMap) {
-    depsMap = new Map();
-    targetMap.set(target, depsMap);
-  }
+    let depsMap = targetMap.get(target);
+    if (!depsMap) {
+        depsMap = new Map();
+        targetMap.set(target, depsMap);
+    }
 
-  let dep = depsMap.get(key);
-  if (!dep) {
-    dep = new Set();
-    depsMap.set(key, dep);
-  }
+    let dep = depsMap.get(key);
+    if (!dep) {
+        dep = new Set();
+        depsMap.set(key, dep);
+    }
 
-  dep.add(activeEffect);
+    dep.add(activeEffect);
 }
 
 /**
@@ -47,12 +47,18 @@ export function track(target, key) {
  * @param {string} key    - The property that changed
  */
 export function trigger(target, key) {
-  const depsMap = targetMap.get(target);
-  if (!depsMap) return;
+    const depsMap = targetMap.get(target);
+    if (!depsMap) return;
 
-  const dep = depsMap.get(key);
-  if (!dep) return;
+    const dep = depsMap.get(key);
+    if (!dep) return;
 
-  // Run each subscriber effect
-  dep.forEach(effect => effect());
+    // Run each subscriber effect
+    dep.forEach(effect => {
+        if (effect.options && effect.options.scheduler) {
+            effect.options.scheduler(effect);
+        } else {
+            effect();
+        }
+    });
 }

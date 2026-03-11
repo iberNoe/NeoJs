@@ -10,10 +10,30 @@ import path from 'path';
 
 export function startDevServer(port = 3000) {
     const server = http.createServer((req, res) => {
-        let filePath = '.' + req.url;
-        if (filePath === './') {
-            filePath = './index.html';
+        let urlPath = req.url.split('?')[0];
+        if (urlPath === '/') urlPath = '/index.html';
+
+        // Try to resolve the file relative to current directory
+        let filePath = path.join(process.cwd(), urlPath);
+
+        // If it doesn't exist, try relative to the monorepo root
+        if (!fs.existsSync(filePath)) {
+            if (urlPath.includes('/packages/')) {
+                // Remove leading slash for correct path joining on Windows
+                const relativeUrlPath = urlPath.startsWith('/') ? urlPath.slice(1) : urlPath;
+
+                // Search up to 3 levels up for the packages directory
+                for (let i = 1; i <= 3; i++) {
+                    const potentialPath = path.join(process.cwd(), '../'.repeat(i), relativeUrlPath);
+                    if (fs.existsSync(potentialPath)) {
+                        filePath = potentialPath;
+                        break;
+                    }
+                }
+            }
         }
+
+        // ... rest of the logic ...
 
         const extname = String(path.extname(filePath)).toLowerCase();
         const mimeTypes = {

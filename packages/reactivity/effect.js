@@ -10,29 +10,26 @@ import { setActiveEffect } from './dependencyTracker.js';
 /**
  * Register and run a reactive effect.
  * @param {Function} fn - The effect function to track and run
- * @returns {{ stop: Function }} - An object with a stop() method to dispose the effect
+ * @param {Object} options - Options including scheduler
+ * @returns {Object} - The effect runner
  */
-export function effect(fn) {
-    // Wrap fn so we can set/unset activeEffect around it
+export function effect(fn, options = {}) {
     const effectFn = () => {
+        if (!effectFn.active) return fn();
+
         setActiveEffect(effectFn);
         try {
-            fn();
+            return fn();
         } finally {
             setActiveEffect(null);
         }
     };
 
-    // Attach original fn for inspection/debugging
-    effectFn.raw = fn;
+    effectFn.active = true;
+    effectFn.options = options;
 
     // Run immediately to collect dependencies
     effectFn();
 
-    return {
-        stop() {
-            // Nullify so future triggers won't re-run
-            effectFn.raw = null;
-        }
-    };
+    return effectFn;
 }
