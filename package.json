@@ -1,0 +1,20 @@
+{
+  "name": "neojs",
+  "version": "0.1.0",
+  "description": "A professional JavaScript framework — NeoJS",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "cli"
+  ],
+  "scripts": {
+    "test:reactivity": "node packages/reactivity/test.js",
+    "test:compiler": "node packages/compiler/test.js",
+    "test:all": "node packages/reactivity/test.js && node packages/compiler/test.js",
+    "example:counter": "node -e \"console.log('Open examples/counter/index.html in your browser')\"",
+    "create": "node cli/index.js create"
+  },
+  "keywords": ["framework", "javascript", "reactive", "virtual-dom"],
+  "author": "NeoJS",
+  "license": "MIT"
+}
